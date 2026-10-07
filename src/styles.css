@@ -1,0 +1,134 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * aleestylist — sistema de diseño
+ * Dorado como acento sobre beige, blanco y rosa empolvado.
+ * Serif editorial (Cormorant Garamond) para títulos, sans limpia (Karla) para
+ * cuerpo y formularios.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Karla", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-blush: var(--blush);
+  --color-sand: var(--sand);
+  --color-ink: var(--ink);
+
+  --shadow-soft: 0 18px 40px -24px oklch(0.35 0.05 70 / 35%);
+  --shadow-card: 0 10px 24px -18px oklch(0.35 0.05 70 / 45%);
+}
+
+:root {
+  --radius: 0.85rem;
+  --background: oklch(0.985 0.008 85);
+  --foreground: oklch(0.26 0.012 60);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.26 0.012 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.26 0.012 60);
+  --primary: oklch(0.72 0.1 82);
+  --primary-foreground: oklch(0.22 0.01 60);
+  --secondary: oklch(0.95 0.018 60);
+  --secondary-foreground: oklch(0.3 0.012 60);
+  --muted: oklch(0.955 0.012 75);
+  --muted-foreground: oklch(0.52 0.015 65);
+  --accent: oklch(0.93 0.024 20);
+  --accent-foreground: oklch(0.3 0.02 20);
+  --destructive: oklch(0.55 0.16 25);
+  --destructive-foreground: oklch(0.99 0.005 85);
+  --border: oklch(0.9 0.015 80);
+  --input: oklch(0.9 0.015 80);
+  --ring: oklch(0.72 0.1 82);
+
+  --gold: oklch(0.72 0.1 82);
+  --gold-soft: oklch(0.9 0.05 85);
+  --blush: oklch(0.93 0.024 20);
+  --sand: oklch(0.96 0.018 78);
+  --ink: oklch(0.26 0.012 60);
+
+  --gradient-hero: linear-gradient(
+    160deg,
+    oklch(0.99 0.01 85) 0%,
+    oklch(0.96 0.02 60) 45%,
+    oklch(0.94 0.026 18) 100%
+  );
+  --gradient-gold: linear-gradient(100deg, oklch(0.78 0.08 88), oklch(0.68 0.11 76));
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+}
+
+@utility hero-surface {
+  background-image: var(--gradient-hero);
+}
+
+@utility gold-surface {
+  background-image: var(--gradient-gold);
+  color: oklch(0.22 0.01 60);
+}
+
+@utility eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+@utility gold-rule {
+  height: 1px;
+  width: 3.5rem;
+  background-image: var(--gradient-gold);
+}
