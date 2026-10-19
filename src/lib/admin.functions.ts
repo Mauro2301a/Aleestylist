@@ -25,7 +25,13 @@ export const adminLogin = createServerFn({ method: "POST" })
   .inputValidator((data: { password: string }) => data)
   .handler(async ({ data }) => {
     const { getGateSession, passwordMatches } = await import("./admin-session.server");
-    const expected = "mauroale12022025";
+    // La contraseña vive solo en la variable de entorno ADMIN_PASSWORD (Vercel / .env local).
+    const expected = process.env["ADMIN_PASSWORD"];
+
+    if (!expected) {
+      console.error("[admin] falta la variable de entorno ADMIN_PASSWORD");
+      return { ok: false as const };
+    }
 
     if (typeof data.password !== "string" || !passwordMatches(data.password, expected)) {
       return { ok: false as const };

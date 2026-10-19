@@ -2,11 +2,9 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// ==========================================
-// PEGA AQUÍ LAS CLAVES QUE TIENES EN VERCEL:
-// ==========================================
-const DEFAULT_SUPABASE_URL = "https://ysrsmoslkfocigmqwoxd.supabase.co"; // <-- Tu URL de Supabase en Vercel
-const DEFAULT_SERVICE_ROLE_KEY = "sb_publishable_U76koCc6gQiAE3jSDxrAjg_qrx990QH"; // <-- Tu SUPABASE_SERVICE_ROLE_KEY de Vercel
+// La URL del proyecto es pública, por eso puede tener un valor de respaldo.
+// La clave de servicio NUNCA va escrita aquí: solo en la variable SUPABASE_SERVICE_ROLE_KEY (Vercel / .env local).
+const DEFAULT_SUPABASE_URL = "https://ysrsmoslkfocigmqwoxd.supabase.co";
 
 function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith('sb_publishable_') || value.startsWith('sb_secret_');
@@ -38,9 +36,7 @@ function createSupabaseAdminClient() {
     (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_SUPABASE_URL : undefined) ||
     DEFAULT_SUPABASE_URL;
 
-  const SUPABASE_SERVICE_ROLE_KEY =
-    process.env['SUPABASE_SERVICE_ROLE_KEY'] ||
-    DEFAULT_SERVICE_ROLE_KEY;
+  const SUPABASE_SERVICE_ROLE_KEY = process.env['SUPABASE_SERVICE_ROLE_KEY'];
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     const message = "Falta SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY";

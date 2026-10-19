@@ -4,11 +4,13 @@ import { createHash, timingSafeEqual } from "node:crypto";
 export type GateSession = { unlocked?: boolean };
 
 function sessionConfig() {
+  // La clave de la sesión vive solo en la variable de entorno SESSION_SECRET (mínimo 32 caracteres).
+  const secret = process.env["SESSION_SECRET"];
+  if (!secret || secret.length < 32) {
+    throw new Error("Falta SESSION_SECRET (variable de entorno de al menos 32 caracteres)");
+  }
   return {
-    // Si no existe la variable SESSION_SECRET, usa esta clave fija de respaldo (mínimo 32 caracteres)
-    password:
-      process.env["SESSION_SECRET"] ||
-      "clave-secreta-fija-de-mas-de-32-caracteres-para-la-sesion-ale-admin-2025",
+    password: secret,
     name: "ale-admin",
     maxAge: 60 * 60 * 12,
     cookie: {
