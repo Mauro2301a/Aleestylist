@@ -305,6 +305,7 @@ type BookingRow = {
   first_name: string;
   last_name: string;
   phone: string;
+  email?: string | null;
   status?: string;
 };
 
@@ -365,6 +366,7 @@ function BookingList({ items }: { items: BookingRow[] }) {
               {formatLongDate(b.booking_date)} · {formatMinute(b.start_minute)}–
               {formatMinute(b.end_minute)}
             </p>
+            {b.email && <p className="mt-0.5 break-all text-xs text-muted-foreground">{b.email}</p>}
             <div className="mt-1 flex items-center justify-between gap-3">
               <a
                 href={`tel:${b.phone.replace(/\s/g, "")}`}

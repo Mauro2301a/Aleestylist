@@ -33,12 +33,12 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 
 function createSupabaseClient() {
   const SUPABASE_URL =
-    (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_SUPABASE_URL : undefined) ||
+    (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env['VITE_SUPABASE_URL'] : undefined) ||
     process.env['SUPABASE_URL'] ||
     DEFAULT_SUPABASE_URL;
 
   const SUPABASE_PUBLISHABLE_KEY =
-    (typeof import.meta !== 'undefined' && import.meta.env ? (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY) : undefined) ||
+    (typeof import.meta !== 'undefined' && import.meta.env ? (import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] || import.meta.env['VITE_SUPABASE_ANON_KEY']) : undefined) ||
     process.env['SUPABASE_PUBLISHABLE_KEY'] ||
     process.env['SUPABASE_ANON_KEY'] ||
     DEFAULT_ANON_KEY;

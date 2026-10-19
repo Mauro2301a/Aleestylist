@@ -9,6 +9,7 @@ export type AdminBooking = {
   first_name: string;
   last_name: string;
   phone: string;
+  email: string | null;
   status: string;
   created_at: string;
 };
@@ -60,7 +61,7 @@ export const adminOverview = createServerFn({ method: "GET" }).handler(async () 
     supabaseAdmin
       .from("bookings")
       .select(
-        "id, service_slug, booking_date, start_minute, end_minute, first_name, last_name, phone, status, created_at",
+        "id, service_slug, booking_date, start_minute, end_minute, first_name, last_name, phone, email, status, created_at",
       )
       .order("booking_date", { ascending: true })
       .order("start_minute", { ascending: true })

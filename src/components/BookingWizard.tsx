@@ -23,7 +23,7 @@ import {
   groupBusyByDate,
   salonNow,
 } from "@/lib/schedule";
-import { notifyNewBooking } from "@/lib/notify.functions";
+import { notifyClientBooking, notifyNewBooking } from "@/lib/notify.functions";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -38,6 +38,7 @@ export function BookingWizard() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
   const [cancelCode, setCancelCode] = useState<string | null>(null);
 
@@ -81,10 +82,12 @@ export function BookingWizard() {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         phone: phone.trim(),
+        email: email.trim(),
       }),
     onSuccess: (created) => {
+      const code = (created as { cancel_code?: string } | null)?.cancel_code ?? null;
       setDone(true);
-      setCancelCode((created as { cancel_code?: string } | null)?.cancel_code ?? null);
+      setCancelCode(code);
       queryClient.invalidateQueries({ queryKey: ["busy"] });
       // Aviso por correo: nunca debe bloquear ni afectar la reserva ya guardada.
       void notifyNewBooking({
@@ -99,6 +102,12 @@ export function BookingWizard() {
       }).catch((error) => {
         console.error("[booking-email] no se pudo enviar el aviso", error);
       });
+      // Confirmación para la clienta (con el enlace para cancelar). Tampoco bloquea la reserva.
+      if (code) {
+        void notifyClientBooking({ data: { cancelCode: code } }).catch((error) => {
+          console.error("[booking-email] no se pudo enviar la confirmación a la clienta", error);
+        });
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message || "No pudimos guardar tu reserva. Intenta otra hora.");
@@ -116,6 +125,7 @@ export function BookingWizard() {
     setFirstName("");
     setLastName("");
     setPhone("");
+    setEmail("");
   }
 
   const cancelUrl = cancelCode
@@ -131,6 +141,10 @@ export function BookingWizard() {
         <h3 className="mt-5 text-3xl">¡Tu hora quedó reservada!</h3>
         <p className="mt-2 text-sm text-muted-foreground">
           Te esperamos. Si necesitas cambiarla, escríbenos por Instagram.
+        </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Te enviaremos la confirmación a <span className="font-medium">{email}</span>, con el
+          enlace para cancelar. Si no la ves en unos minutos, revisa tu carpeta de spam.
         </p>
         <dl className="mx-auto mt-6 max-w-sm space-y-2 rounded-xl bg-secondary/70 p-4 text-left text-sm">
           <Row label="Servicio" value={service.name} />
@@ -369,6 +383,24 @@ export function BookingWizard() {
                 className="h-12 text-base"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Correo electrónico</Label>
+              <Input
+                id="email"
+                type="email"
+                inputMode="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                maxLength={254}
+                required
+                autoComplete="email"
+                placeholder="tucorreo@gmail.com"
+                className="h-12 text-base"
+              />
+              <p className="text-xs text-muted-foreground">
+                Te enviaremos la confirmación de tu hora y el enlace para cancelarla.
+              </p>
+            </div>
             <Button type="submit" size="lg" className="w-full">
               Continuar
             </Button>
@@ -387,6 +419,7 @@ export function BookingWizard() {
               />
               <Row label="Nombre" value={`${firstName} ${lastName}`} />
               <Row label="Teléfono" value={phone} />
+              <Row label="Correo" value={email} raw />
             </dl>
             <Button
               size="lg"
@@ -407,11 +440,11 @@ export function BookingWizard() {
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({ label, value, raw }: { label: string; value: string; raw?: boolean }) {
   return (
     <div className="flex items-baseline justify-between gap-4">
       <dt className="text-xs uppercase tracking-wider text-muted-foreground">{label}</dt>
-      <dd className="text-right font-medium capitalize">{value}</dd>
+      <dd className={cn("break-all text-right font-medium", !raw && "capitalize")}>{value}</dd>
     </div>
   );
 }

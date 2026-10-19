@@ -47,6 +47,7 @@ export type CreateBookingInput = {
   firstName: string;
   lastName: string;
   phone: string;
+  email: string;
 };
 
 export async function createBooking(input: CreateBookingInput) {
@@ -57,6 +58,7 @@ export async function createBooking(input: CreateBookingInput) {
     p_first_name: input.firstName,
     p_last_name: input.lastName,
     p_phone: input.phone,
+    p_email: input.email,
   });
   if (error) throw new Error(error.message);
   return Array.isArray(data) ? data[0] : data;

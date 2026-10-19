@@ -33,7 +33,7 @@ function createSupabaseAdminClient() {
   const SUPABASE_URL =
     process.env['SUPABASE_URL'] ||
     process.env['VITE_SUPABASE_URL'] ||
-    (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_SUPABASE_URL : undefined) ||
+    (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env['VITE_SUPABASE_URL'] : undefined) ||
     DEFAULT_SUPABASE_URL;
 
   const SUPABASE_SERVICE_ROLE_KEY = process.env['SUPABASE_SERVICE_ROLE_KEY'];

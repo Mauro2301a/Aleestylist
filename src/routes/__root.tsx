@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Reserva tu hora con aleestylist: uñas, coloración y decoloración en Yumbel y Concepción. Belleza que habla por ti.",
+          "Reserva tu hora con aleestylist: manicure y esmaltados en Yumbel. Belleza que habla por ti.",
       },
       { name: "author", content: "aleestylist" },
       { property: "og:type", content: "website" },

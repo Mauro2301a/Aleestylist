@@ -33,7 +33,9 @@ export type Database = {
         Row: {
           booking_date: string
           cancel_code: string
+          confirmation_sent_at: string | null
           created_at: string
+          email: string | null
           end_minute: number
           first_name: string
           id: string
@@ -46,7 +48,9 @@ export type Database = {
         Insert: {
           booking_date: string
           cancel_code?: string
+          confirmation_sent_at?: string | null
           created_at?: string
+          email?: string | null
           end_minute: number
           first_name: string
           id?: string
@@ -59,7 +63,9 @@ export type Database = {
         Update: {
           booking_date?: string
           cancel_code?: string
+          confirmation_sent_at?: string | null
           created_at?: string
+          email?: string | null
           end_minute?: number
           first_name?: string
           id?: string
@@ -139,6 +145,7 @@ export type Database = {
       create_booking: {
         Args: {
           p_booking_date: string
+          p_email: string
           p_first_name: string
           p_last_name: string
           p_phone: string

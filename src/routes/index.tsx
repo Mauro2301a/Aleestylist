@@ -13,9 +13,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { BookingWizard } from "@/components/BookingWizard";
 
-const TITLE = "aleestylist — Manicure & Esmaltados en Yumbel y Concepción";
+const TITLE = "aleestylist — Manicure & Esmaltados en Yumbel";
 const DESCRIPTION =
-  "Esmaltados de alta precisión, manicure combinada, nivelación y diseño de autor cuidando la salud de tus uñas. Reserva tu hora online en Yumbel y Concepción.";
+  "Esmaltados de alta precisión, manicure combinada, nivelación y diseño de autor cuidando la salud de tus uñas. Reserva tu hora online en Yumbel.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -62,7 +62,7 @@ const SERVICES = [
 ];
 
 const TRUST = [
-  { icon: MapPin, text: "Yumbel y Concepción" },
+  { icon: MapPin, text: "Atención en Yumbel" },
   { icon: Clock3, text: "Reserva en menos de 1 minuto" },
   { icon: MessageCircle, text: "Contacto directo por WhatsApp" },
   { icon: Sparkles, text: "Resultados reales, sin filtros" },
@@ -82,7 +82,7 @@ const WHY = [
   {
     icon: MapPin,
     title: "Especialista local",
-    text: "Atención en Yumbel con proyección a Concepción. Esmaltados y diseño de uñas con foco absoluto en la prolijidad.",
+    text: "Atención en Yumbel. Esmaltados y diseño de uñas con foco absoluto en la prolijidad.",
   },
 ];
 
@@ -107,7 +107,7 @@ function Home() {
       <section className="hero-surface px-5 pb-12 pt-12 sm:pb-16 sm:pt-16">
         <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
           <div className="text-center lg:text-left">
-            <p className="eyebrow">Studio de Uñas en Yumbel y Concepción</p>
+            <p className="eyebrow">Studio de Uñas en Yumbel</p>
             <h1 className="mt-4 text-4xl leading-[1.08] sm:text-5xl lg:text-6xl">
               Reserva tu manicure perfecta en 1 minuto, sin llamadas ni esperas
             </h1>
@@ -252,7 +252,7 @@ function Home() {
         <p className="font-display text-3xl">aleestylist</p>
         <p className="mt-2 font-display text-xl text-muted-foreground">Belleza que habla por ti.</p>
         <p className="mt-3 inline-flex items-center gap-1.5 text-sm">
-          <MapPin className="h-4 w-4 text-primary" /> Yumbel · Concepción, Chile
+          <MapPin className="h-4 w-4 text-primary" /> Yumbel, Chile
         </p>
         <div className="mt-5">
           <a
