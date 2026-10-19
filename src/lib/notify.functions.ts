@@ -10,22 +10,13 @@ export type BookingNotification = {
 };
 
 /**
- * Envía el aviso de nueva reserva por EmailJS.
+ * Envía el aviso de nueva reserva a la dueña (Gmail directo; EmailJS como respaldo).
  * Nunca lanza: el correo es un aviso adicional y no debe bloquear la reserva.
  */
 export const notifyNewBooking = createServerFn({ method: "POST" })
   .inputValidator((data: BookingNotification) => data)
   .handler(async ({ data }) => {
-    const serviceId = process.env["EMAILJS_SERVICE_ID"];
-    const templateId = process.env["EMAILJS_TEMPLATE_ID"];
-    const publicKey = process.env["EMAILJS_PUBLIC_KEY"];
-    const privateKey = process.env["EMAILJS_PRIVATE_KEY"];
     const to = process.env["ADMIN_EMAIL"] ?? "aleestylist12@gmail.com";
-
-    if (!serviceId || !templateId || !publicKey) {
-      console.error("[booking-email] faltan credenciales de EmailJS");
-      return { sent: false, reason: "missing_credentials" as const };
-    }
 
     const subject = `Nueva reserva — ${data.serviceName} el ${data.dateLabel} a las ${data.timeLabel.split(" a ")[0]}`;
     const message = [
@@ -39,44 +30,28 @@ export const notifyNewBooking = createServerFn({ method: "POST" })
     ].join("\n");
 
     try {
-      const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          origin: "https://aleestylist.lovable.app",
-          // EmailJS pasa por Cloudflare y rechaza (403, código 1010) peticiones sin User-Agent de navegador.
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      const { sendMail } = await import("./mailer.server");
+      const result = await sendMail({
+        to,
+        subject,
+        text: message,
+        templateParams: {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          phone: data.phone,
+          service: data.serviceName,
+          date: data.dateLabel,
+          time: data.timeLabel,
         },
-        body: JSON.stringify({
-          service_id: serviceId,
-          template_id: templateId,
-          user_id: publicKey,
-          ...(privateKey ? { accessToken: privateKey } : {}),
-          template_params: {
-            to_email: to,
-            subject,
-            message,
-            first_name: data.firstName,
-            last_name: data.lastName,
-            phone: data.phone,
-            service: data.serviceName,
-            date: data.dateLabel,
-            time: data.timeLabel,
-          },
-        }),
       });
-
-      if (!res.ok) {
-        const body = await res.text();
-        console.error("[booking-email] EmailJS respondió", res.status, body);
-        return { sent: false, reason: "api_error" as const, status: res.status, body };
+      if (!result.ok) {
+        console.error("[booking-email] no se pudo enviar el aviso", result.reason);
+        return { sent: false, reason: "api_error" as const };
       }
-
       console.log("[booking-email] aviso enviado a", to);
       return { sent: true as const };
     } catch (error) {
-      console.error("[booking-email] fallo de red", error);
+      console.error("[booking-email] fallo", error);
       return { sent: false, reason: "network_error" as const };
     }
   });
@@ -93,16 +68,6 @@ export const notifyNewBooking = createServerFn({ method: "POST" })
 export const notifyClientBooking = createServerFn({ method: "POST" })
   .inputValidator((data: { cancelCode: string }) => data)
   .handler(async ({ data }) => {
-    const serviceId = process.env["EMAILJS_SERVICE_ID"];
-    const templateId = process.env["EMAILJS_TEMPLATE_ID"];
-    const publicKey = process.env["EMAILJS_PUBLIC_KEY"];
-    const privateKey = process.env["EMAILJS_PRIVATE_KEY"];
-
-    if (!serviceId || !templateId || !publicKey) {
-      console.error("[client-email] faltan credenciales de EmailJS");
-      return { sent: false, reason: "missing_credentials" as const };
-    }
-
     const code = typeof data.cancelCode === "string" ? data.cancelCode : "";
     if (!/^[a-f0-9]{32}$/i.test(code)) {
       return { sent: false, reason: "invalid_code" as const };
@@ -170,42 +135,28 @@ export const notifyClientBooking = createServerFn({ method: "POST" })
         `aleestylist`,
       ].join("\n");
 
-      const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          origin: "https://aleestylist.lovable.app",
-          // EmailJS pasa por Cloudflare y rechaza (403, código 1010) peticiones sin User-Agent de navegador.
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      const { sendMail } = await import("./mailer.server");
+      const result = await sendMail({
+        to: booking.email,
+        subject,
+        text: message,
+        templateParams: {
+          first_name: booking.first_name,
+          service: serviceName,
+          date: dateLabel,
+          time: timeLabel,
+          cancel_url: cancelUrl,
         },
-        body: JSON.stringify({
-          service_id: serviceId,
-          template_id: templateId,
-          user_id: publicKey,
-          ...(privateKey ? { accessToken: privateKey } : {}),
-          template_params: {
-            to_email: booking.email,
-            subject,
-            message,
-            first_name: booking.first_name,
-            service: serviceName,
-            date: dateLabel,
-            time: timeLabel,
-            cancel_url: cancelUrl,
-          },
-        }),
       });
 
-      if (!res.ok) {
-        const body = await res.text();
-        console.error("[client-email] EmailJS respondió", res.status, body);
+      if (!result.ok) {
+        console.error("[client-email] no se pudo enviar", result.reason);
         // Libera el envío para poder reintentar dentro de la ventana de 15 minutos.
         await supabaseAdmin
           .from("bookings")
           .update({ confirmation_sent_at: null })
           .eq("id", booking.id);
-        return { sent: false, reason: "api_error" as const, status: res.status };
+        return { sent: false, reason: "api_error" as const };
       }
 
       return { sent: true as const };
