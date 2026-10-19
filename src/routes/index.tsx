@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Instagram,
   MapPin,
@@ -264,6 +264,17 @@ function Home() {
             <Instagram className="h-4 w-4 text-primary" /> @aleestylist
           </a>
         </div>
+        <nav
+          aria-label="Información legal"
+          className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground"
+        >
+          <Link to="/terminos" className="underline-offset-4 hover:text-foreground hover:underline">
+            Términos y Condiciones
+          </Link>
+          <Link to="/privacidad" className="underline-offset-4 hover:text-foreground hover:underline">
+            Política de Privacidad
+          </Link>
+        </nav>
       </footer>
     </main>
   );

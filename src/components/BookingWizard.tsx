@@ -4,7 +4,9 @@ import { Check, ChevronLeft, Clock, Copy, KeyRound, Sparkles } from "lucide-reac
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { LEGAL_VERSION } from "@/lib/legal";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
@@ -39,6 +41,7 @@ export function BookingWizard() {
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [accepted, setAccepted] = useState(false);
   const [done, setDone] = useState(false);
   const [cancelCode, setCancelCode] = useState<string | null>(null);
 
@@ -74,8 +77,11 @@ export function BookingWizard() {
   const selectedDay = days.find((d) => d.key === dateKey);
 
   const booking = useMutation({
-    mutationFn: () =>
-      createBooking({
+    mutationFn: () => {
+      if (!accepted) {
+        throw new Error("Debes aceptar los términos y condiciones y la política de privacidad.");
+      }
+      return createBooking({
         serviceSlug: service!.slug,
         date: dateKey!,
         startMinute: startMinute!,
@@ -83,7 +89,10 @@ export function BookingWizard() {
         lastName: lastName.trim(),
         phone: phone.trim(),
         email: email.trim(),
-      }),
+        acceptTerms: accepted,
+        termsVersion: LEGAL_VERSION,
+      });
+    },
     onSuccess: (created) => {
       const code = (created as { cancel_code?: string } | null)?.cancel_code ?? null;
       setDone(true);
@@ -126,6 +135,7 @@ export function BookingWizard() {
     setLastName("");
     setPhone("");
     setEmail("");
+    setAccepted(false);
   }
 
   const cancelUrl = cancelCode
@@ -421,17 +431,48 @@ export function BookingWizard() {
               <Row label="Teléfono" value={phone} />
               <Row label="Correo" value={email} raw />
             </dl>
+            <div className="mt-5 flex items-start gap-3 rounded-xl border border-border bg-card p-3">
+              <Checkbox
+                id="accept-terms"
+                checked={accepted}
+                onCheckedChange={(v) => setAccepted(v === true)}
+                className="mt-0.5"
+              />
+              <Label htmlFor="accept-terms" className="text-sm font-normal leading-snug">
+                He leído y acepto los{" "}
+                <a
+                  href="/terminos"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium underline underline-offset-4"
+                >
+                  Términos y Condiciones
+                </a>{" "}
+                y la{" "}
+                <a
+                  href="/privacidad"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium underline underline-offset-4"
+                >
+                  Política de Privacidad
+                </a>
+                .
+              </Label>
+            </div>
             <Button
               size="lg"
-              className="mt-5 w-full"
-              disabled={booking.isPending}
+              className="mt-4 w-full"
+              disabled={booking.isPending || !accepted}
               onClick={() => booking.mutate()}
             >
               <Sparkles className="mr-2 h-4 w-4" />
               {booking.isPending ? "Guardando…" : "Confirmar reserva"}
             </Button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              No se solicita ningún pago en línea.
+              {accepted
+                ? "No se solicita ningún pago en línea."
+                : "Marca la casilla para poder confirmar tu reserva."}
             </p>
           </div>
         )}

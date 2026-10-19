@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
+import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as CancelarCodeRouteImport } from './routes/cancelar.$code'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +25,16 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TerminosRoute = TerminosRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CancelarCodeRoute = CancelarCodeRouteImport.update({
   id: '/cancelar/$code',
   path: '/cancelar/$code',
@@ -32,30 +44,44 @@ const CancelarCodeRoute = CancelarCodeRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/privacidad': typeof PrivacidadRoute
+  '/terminos': typeof TerminosRoute
   '/cancelar/$code': typeof CancelarCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/privacidad': typeof PrivacidadRoute
+  '/terminos': typeof TerminosRoute
   '/cancelar/$code': typeof CancelarCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/privacidad': typeof PrivacidadRoute
+  '/terminos': typeof TerminosRoute
   '/cancelar/$code': typeof CancelarCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/cancelar/$code'
+  fullPaths: '/' | '/admin' | '/privacidad' | '/terminos' | '/cancelar/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/cancelar/$code'
-  id: '__root__' | '/' | '/admin' | '/cancelar/$code'
+  to: '/' | '/admin' | '/privacidad' | '/terminos' | '/cancelar/$code'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/privacidad'
+    | '/terminos'
+    | '/cancelar/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  PrivacidadRoute: typeof PrivacidadRoute
+  TerminosRoute: typeof TerminosRoute
   CancelarCodeRoute: typeof CancelarCodeRoute
 }
 
@@ -75,6 +101,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cancelar/$code': {
       id: '/cancelar/$code'
       path: '/cancelar/$code'
@@ -88,6 +128,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  PrivacidadRoute: PrivacidadRoute,
+  TerminosRoute: TerminosRoute,
   CancelarCodeRoute: CancelarCodeRoute,
 }
 export const routeTree = rootRouteImport

@@ -44,6 +44,8 @@ export type Database = {
           service_slug: string
           start_minute: number
           status: string
+          terms_accepted_at: string | null
+          terms_version: string | null
         }
         Insert: {
           booking_date: string
@@ -59,6 +61,8 @@ export type Database = {
           service_slug: string
           start_minute: number
           status?: string
+          terms_accepted_at?: string | null
+          terms_version?: string | null
         }
         Update: {
           booking_date?: string
@@ -74,6 +78,8 @@ export type Database = {
           service_slug?: string
           start_minute?: number
           status?: string
+          terms_accepted_at?: string | null
+          terms_version?: string | null
         }
         Relationships: [
           {
@@ -144,6 +150,7 @@ export type Database = {
       cancel_booking_by_code: { Args: { p_code: string }; Returns: boolean }
       create_booking: {
         Args: {
+          p_accept_terms: boolean
           p_booking_date: string
           p_email: string
           p_first_name: string
